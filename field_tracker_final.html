@@ -787,9 +787,9 @@ let mapMarkers = [];
 
 async function loadState() {
   try {
-    const result = await window.storage.get(STORAGE_KEY);
-    if (result && result.value) {
-      const parsed = JSON.parse(result.value);
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
       state = Object.assign({ progress: {}, notes: {} }, parsed);
       state.progress = state.progress || {};
       state.notes = state.notes || {};
@@ -803,10 +803,10 @@ let saveTimeout = null;
 function saveState(showIndicator) {
   if (showIndicator === undefined) showIndicator = true;
   clearTimeout(saveTimeout);
-  saveTimeout = setTimeout(async () => {
+  saveTimeout = setTimeout(() => {
     try {
       state.lastSaved = new Date().toISOString();
-      await window.storage.set(STORAGE_KEY, JSON.stringify(state));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       if (showIndicator) flashSaved();
     } catch (e) { console.error('Save failed:', e); }
   }, 300);
